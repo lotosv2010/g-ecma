@@ -17,6 +17,7 @@ const globalEC = new ExecutionContext(globalLexicalEnvironment, global);
 // 3.将全局环境压入执行环境栈中
 ECStack.push(globalEC);
 
+// 4.准备执行代码，注册全局变量
 //令 env 为当前运行的执行环境的环境变量的 环境记录
 let env = ECStack.current.lexicalEnvironment.environmentRecord;
 //如果 code 是 eval 代码 ，则令 configurableBindings 为 true，否则令 configurableBindings 为 false。
