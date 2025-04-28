@@ -18,6 +18,7 @@ const ExecutionContext = require('../src/ExecutionContext');
 const ECStack = require('../src/ECStack');
 const FunctionDeclaration = require('../src/FunctionDeclaration');
 const CreateArgumentsObject = require('../src/CreateArgumentsObject');
+const Reference = require('../src/Reference');
 
 // 1.将变量环境设置为全局环境 
 const globalLexicalEnvironment = LexicalEnvironment.NewObjectEnvironment(global, null);
@@ -175,12 +176,20 @@ ECStack.current.lexicalEnvironment = localEnv;
 // 9.执行函数
 //开始执行one
 ECStack.current.variableEnvironment.environmentRecord.SetMutableBinding('b', 2);
+const referenceA = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a')
+const referenceB = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b')
+const referenceC = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c')
+const referenceE = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'e')
 console.log(
-  'a=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a').name,
-  'b=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b').name,
-  'c=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c').name,
-  'e=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'e').name,
+  // 'a=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a').name,
+  // 'b=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b').name,
+  // 'c=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c').name,
+  // 'e=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'e').name,
   //LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'f')
+  'a=' + referenceA.name,
+  'b=' + referenceB.name,
+  'c=' + referenceC.name,
+  'e=' + referenceE.name,
 );
 ECStack.current.lexicalEnvironment.environmentRecord.SetMutableBinding('d', 4);
 
@@ -214,13 +223,27 @@ if (!varAlreadyDeclared) {
 ECStack.current.lexicalEnvironment.environmentRecord.SetMutableBinding('d', 5);
 ECStack.current.variableEnvironment.environmentRecord.SetMutableBinding('e', 6);
 ECStack.current.lexicalEnvironment.environmentRecord.SetMutableBinding('f', 7);
+
+
+const referenceA1 = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a')
+const referenceB1 = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b')
+const referenceC1 = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c')
+const referenceD1 = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'd')
+const referenceE1 = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'e')
+const referenceF1 = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'f')
 console.log(
-  'a=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a').name,
-  'b=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b').name,
-  'c=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c').name,
-  'd=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'd').name,
-  'e=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'e').name,
-  'f=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'f').name
+  // 'a=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a').name,
+  // 'b=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b').name,
+  // 'c=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c').name,
+  // 'd=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'd').name,
+  // 'e=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'e').name,
+  // 'f=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'f').name
+  'a=' + referenceA1.name,
+  'b=' + referenceB1.name,
+  'c=' + referenceC1.name,
+  'd=' + referenceD1.name,
+  'e=' + referenceE1.name,
+  'f=' + referenceF1.name,
 );
 
 // 12.恢复执行环境

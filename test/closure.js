@@ -14,6 +14,7 @@ const ExecutionContext = require('../src/ExecutionContext');
 const ECStack = require('../src/ECStack');
 const FunctionDeclaration = require('../src/FunctionDeclaration');
 const CreateArgumentsObject = require('../src/CreateArgumentsObject');
+const Reference = require('../src/Reference');
 
 //1.将变量环境设置为全局环境 
 const globalLexicalEnvironment = LexicalEnvironment.NewObjectEnvironment(global, null);
@@ -230,10 +231,16 @@ if (!argumentsAlreadyDeclared) {
   env.CreateMutableBinding('arguments');
   env.SetMutableBinding('arguments', argsObj);
 }
+const referenceA = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a')
+const referenceB = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b')
+const referenceC = LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c')
 console.log(
-  'a=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a').name,
-  'b=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b').name,
-  'c=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c').name
+  // 'a=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a').name,
+  // 'b=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b').name,
+  // 'c=' + LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c').name
+  'a=' + referenceA.name,
+  'b=' + referenceB.name,
+  'c=' + referenceC.name
 );
 
 // 13.退出two
