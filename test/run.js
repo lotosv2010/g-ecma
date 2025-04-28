@@ -10,6 +10,7 @@ const LexicalEnvironment = require('../src/LexicalEnvironment');
 const ExecutionContext = require('../src/ExecutionContext');
 const ECStack = require('../src/ECStack');
 const FunctionDeclaration = require('../src/FunctionDeclaration');
+const CreateArgumentsObject = require('../src/CreateArgumentsObject');
 
 // 1.将变量环境设置为全局环境 
 const globalLexicalEnvironment = LexicalEnvironment.NewObjectEnvironment(global, null);
@@ -37,7 +38,7 @@ if (!varAlreadyDeclared) {
   //以 dn、undefined 和 strict 为参数，调用 env 的 SetMutableBinding 具体方法。
   env.SetMutableBinding(dn, undefined, strict);
 }
-console.log(env.GetBindingValue('a')); // undefined
+// console.log(env.GetBindingValue('a')); // undefined
 
 // 5.准备执行代码，注册全局函数
 //按源码顺序遍历 code，对于每一个 FunctionDeclaration 表达式 f：
@@ -73,4 +74,72 @@ if (!argAlreadyDeclared) {
   }
 }
 env.SetMutableBinding(fn, fo, strict);
-console.log(env.GetBindingValue('one'));
+// console.log(env.GetBindingValue('one'));
+
+// 6.执行代码
+// 给a赋值为1
+env.SetMutableBinding('a', 1);
+console.log(env.GetBindingValue('a'));// 1
+
+// 7.编译函数
+// 进入函数代码
+// 当控制流根据一个函数对象 F、调用者提供的 thisArg 以及调用者提供的 argumentList，进入 函数代码 的执行环境时，执行以下步+骤：
+let thisArg = global;
+let argumentList = [3];
+// 以 F 的 [[Scope]] 内部属性为参数调用 NewDeclarativeEnvironment，并令 localEnv 为调用的结果
+let localEnv = LexicalEnvironment.NewDeclarativeEnvironment(fo[`[[Scope]]`]);
+// 设词法环境为 localEnv 设变量环境为 localEnv
+let oneExecutionContext = new ExecutionContext(localEnv, thisArg);
+ECStack.push(oneExecutionContext);
+// 按 [10.5](#10.5) 描述的方案，使用 函数代码 code 和 argumentList 执行定义绑定初始化步骤
+env = ECStack.current.lexicalEnvironment.environmentRecord;
+configurableBindings = false;
+strict = false;
+// 令 func 为通过 [[Call]] 内部属性初始化 code 的执行的函数对象
+let func = fo;
+// 令 code 为 F 的 [[Code]] 内部属性的值。
+let code = func[`[[Code]]`];
+// 令 names 为 func 的 [[FormalParameters]] 内部属性。
+names = func[`[[FormalParameters]]`];
+let args = [3];
+// 令 argCount 为 args 中元素的数量
+let argCount = args.length;
+let n = 0;
+names.forEach(argName => {
+  n += 1;
+  let v = n > argCount ? undefined : args[n - 1];
+  //以 argName 为参数，调用 env 的 HasBinding 具体方法，并令 argAlreadyDeclared 为调用的结果。
+  argAlreadyDeclared = env.HasBinding(argName);
+  if (!argAlreadyDeclared) {
+    env.CreateMutableBinding(argName);
+  }
+  env.SetMutableBinding(argName, v, strict);
+});
+let argumentsAlreadyDeclared = env.HasBinding('arguments');
+if (!argumentsAlreadyDeclared) {
+  let argsObj = CreateArgumentsObject(func, names, args, env, strict);
+  env.CreateMutableBinding('arguments');
+  env.SetMutableBinding('arguments', argsObj);
+}
+
+dn = 'b';
+//以 dn 为参数，调用 env 的 HasBinding 具体方法，并令 varAlreadyDeclared 为调用的结果
+varAlreadyDeclared = env.HasBinding(dn);
+//如果 varAlreadyDeclared 为 false，则：
+if (!varAlreadyDeclared) {
+  //以 dn 和 configurableBindings 为参数，调用 env 的 CreateMutableBinding 具体方法。
+  env.CreateMutableBinding(dn, configurableBindings);
+  //以 dn、undefined 和 strict 为参数，调用 env 的 SetMutableBinding 具体方法。
+  env.SetMutableBinding(dn, undefined, strict);
+}
+
+// 8.执行函数
+env.SetMutableBinding(dn, 2);
+
+console.log(env.GetBindingValue('arguments'));//['3']
+
+console.log(
+  LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'a'),
+  LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'b'),
+  LexicalEnvironment.GetIdentifierReference(ECStack.current.lexicalEnvironment, 'c')
+);
