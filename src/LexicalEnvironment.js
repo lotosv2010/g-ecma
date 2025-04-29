@@ -1,5 +1,6 @@
 const DeclarativeEnvironmentRecords = require("./DeclarativeEnvironmentRecords");
 const ObjectEnvironmentRecords = require("./ObjectEnvironmentRecords");
+const Reference = require("./Reference");
 
 /**
  * 词法环境
@@ -17,8 +18,9 @@ class LexicalEnvironment {
     let envRec = lex.environmentRecord;
     let exists = envRec.HasBinding(name);
     if (exists) {
-      const value = envRec.GetBindingValue(name);
-      return { name: value };
+      // const value = envRec.GetBindingValue(name);
+      // return { name: value };
+      return new Reference(envRec, name, strict)
     } else {
       lex = lex.outer;
       return LexicalEnvironment.GetIdentifierReference(lex, name, strict);
